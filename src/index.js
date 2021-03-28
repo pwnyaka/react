@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
-
 import "./index.css"
+import App from './components/MessageField'
 
 const messages = ["Hello"]
 
@@ -29,8 +29,6 @@ const Messages = () => {
 }
 
 ReactDOM.render(
-    <>
-      <Messages title="title"/>
-    </>,
+    <App/>,
     document.querySelector("#root"),
 )
