@@ -1,34 +1,21 @@
+// import { Test } from "@components/app"
+import { ThemeProvider, createMuiTheme } from "@material-ui/core"
 import React from "react"
 import ReactDOM from "react-dom"
+import { MessageList, Layout, ChatList, Header } from "./components"
+// import styles from "./index.module.css"
+
 import "./index.css"
-import App from './components/MessageField'
 
-const messages = ["Hello"]
-
-const Messages = () => {
-  return (
-      <div>
-        <h1>messages</h1>
-        {messages.map((message, key) => (
-            <p key={key}>{message}</p>
-        ))}
-        <input placeholder="Введите сообщение"/>
-        <button onClick={(e) => {
-          e.preventDefault()
-          messages.push(document.querySelector('input').value)
-          ReactDOM.render(
-              <>
-                <Messages title="title"/>
-              </>,
-              document.querySelector("#root"),
-          )
-        }}>Отправить
-        </button>
-      </div>
-  )
+const dark = {
+  color: "red",
 }
 
+const theme = createMuiTheme(dark)
+
 ReactDOM.render(
-    <App/>,
-    document.querySelector("#root"),
+  <ThemeProvider theme={theme}>
+    <Layout header={<Header/>} chatList={<ChatList />} messageList={<MessageList/>}/>
+  </ThemeProvider>,
+  document.getElementById("root"),
 )
