@@ -1,0 +1,7 @@
+.layout {
+    position: relative;
+    padding-top: 80px;
+}
+.content {
+    display: flex;
+}
