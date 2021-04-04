@@ -26,15 +26,41 @@ export class MessageProvider extends Component {
     }
   }
 
+  // componentDidUpdate(_, state) {
+  //   const { messages } = this.state
+  //
+  //   const lastMessage = messages[messages.length - 1]
+  //
+  //   if (lastMessage.author === "User" && state.messages !== messages) {
+  //     setTimeout(() => {
+  //       this.sendMessage({ author: "bot", value: "Как дела ?" })
+  //     }, 500)
+  //   }
+  // }
 
-  sendMessage = ({ author, value }) => {
-    const { messages } = this.state
 
+  sendMessage = ({ author, text, id }) => {
+    const { messages } = this.state.messages[id]
+    const date = new Date()
     this.setState({
-      messages: [...messages, { author, value }],
-      value: "",
+      messages: {
+        [id]: [...messages, { author, text, date }]
+      },
+      // value: "",
     })
   }
+
+  handleChangeInput = ({ target }) => {
+    this.setState({
+      value: target.value,
+    })
+  }
+
+  handlePressInput = ({ code }) => {
+      if (code === "Enter") {
+        this.sendMessage({ author, text, id })
+      }
+    }
 
 
   render() {
@@ -44,12 +70,17 @@ export class MessageProvider extends Component {
     const {id} = match.params ?? {}
 
     const state = {
+      id,
       conversations,
       messages: messages[id] ?? [],
-      value: conversations.find(conversation => conversation.title === id)?.value ?? ""
+      // value: conversations.find(conversation => conversation.title === id)?.value ?? ""
     }
 
-    const actions = {}
+    const actions = {
+      sendMessage: this.sendMessage,
+      handlePressInput: this.handlePressInput,
+      handleChangeInput: this.handleChangeInput
+    }
 
     return children(state, actions)
   }

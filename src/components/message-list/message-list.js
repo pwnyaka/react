@@ -26,16 +26,18 @@ export class MessageList extends Component {
   static propTypes = {
     messages: PropTypes.array,
     value: PropTypes.string,
+    sendMessage: PropTypes.func,
+    handlePressInput: PropTypes.func
   }
 
-  sendMessage = ({ author, value }) => {
-    const { messages } = this.state
-
-    this.setState({
-      messages: [...messages, { author, value }],
-      value: "",
-    })
-  }
+  // sendMessage = ({ author, value }) => {
+  //   const { messages } = this.state
+  //
+  //   this.setState({
+  //     messages: [...messages, { author, value }],
+  //     value: "",
+  //   })
+  // }
 
   // handleChangeInput = ({ target }) => {
   //   this.setState({
@@ -62,7 +64,7 @@ export class MessageList extends Component {
   }
 
   render() {
-    const { messages, value } = this.props
+    const { id, messages, value, sendMessage, handlePressInput } = this.props
 
     return (
       <div className={styles.wrapper}>
@@ -73,15 +75,15 @@ export class MessageList extends Component {
           fullWidth={true}
           value={value}
           // onChange={this.handleChangeInput}
-          // onKeyPress={this.handlePressInput}
+          onKeyPress={(code) => {handlePressInput(code)}}
           placeholder="Введите сообщение..."
           endAdornment={
             <InputAdornment position="end">
-              {value && (
+              { (
                 <Send
                   className={styles.icon}
                   onClick={() => {
-                    this.sendMessage({ author: "User", value })
+                    sendMessage({ author: "User", value, id })
                   }}
                 />
               )}
