@@ -6,18 +6,16 @@ export class Layout extends Component {
   static propTypes = {
     header: PropTypes.node.isRequired,
     chatList: PropTypes.node.isRequired,
-    messageList: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
   }
 
   render() {
-    const {header} = this.props
-    const {chatList} = this.props
-    const {messageList } = this.props
+    const {header, chatList, children} = this.props
     return <div className={styles.layout}>
       {header}
       <div className={styles.content}>
         {chatList}
-        {messageList}
+        {children}
       </div>
     </div>
   }
