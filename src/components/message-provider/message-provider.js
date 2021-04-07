@@ -26,46 +26,57 @@ export class MessageProvider extends Component {
     }
   }
 
-  // componentDidUpdate(_, state) {
-  //   const { messages } = this.state
-  //
-  //   const lastMessage = messages[messages.length - 1]
-  //
-  //   if (lastMessage.author === "User" && state.messages !== messages) {
-  //     setTimeout(() => {
-  //       this.sendMessage({ author: "bot", value: "Как дела ?" })
-  //     }, 500)
-  //   }
-  // }
+  componentDidUpdate(_, state) {
+    const {match: {params}} = this.props
+    const { messages } = this.state
 
+    const lastMessage = messages[params.id][messages[params.id].length - 1]
 
-  sendMessage = ({ author, text, id }) => {
-    const { messages } = this.state.messages[id]
-    const date = new Date()
-    this.setState({
-      messages: {
-        [id]: [...messages, { author, text, date }]
-      },
-      // value: "",
-    })
-  }
-
-  handleChangeInput = ({ target }) => {
-    this.setState({
-      value: target.value,
-    })
-  }
-
-  handlePressInput = ({ code }) => {
-      if (code === "Enter") {
-        this.sendMessage({ author, text, id })
-      }
+    if (lastMessage.author === "User") {
+      setTimeout(() => {
+        this.sendMessage({ author: "bot", text: "Как дела ?", createdTs: new Date()})
+      }, 500)
     }
+  }
 
+
+  sendMessage = ({author, text}) => {
+    if (!text) {
+      return
+    }
+    const {match: {params}} = this.props
+    const newMessage = {author, text, createdTs: new Date()}
+    this.setState({
+      conversations: this.state.conversations.map((conversation) => {
+        if (conversation.title === params.id) {
+          return {...conversation, lastMessage: newMessage, value: ''}
+        }
+        return conversation
+      }),
+      messages: {
+        ...this.state.messages,
+        [params.id]: [
+          ...(this.state.messages[params.id] || []), newMessage
+        ]
+      }
+    })
+  }
+
+  handleChangeValue = (value) => {
+    const {match: {params}} = this.props
+    this.setState({
+      conversations: this.state.conversations.map((conversation) => {
+        if (conversation.title === params.id) {
+          return {...conversation, value}
+        }
+        return conversation
+      })
+    })
+  }
 
   render() {
-    const { children, match } = this.props
-    const {messages, conversations } = this.state
+    const {children, match} = this.props
+    const {messages, conversations} = this.state
 
     const {id} = match.params ?? {}
 
@@ -73,13 +84,12 @@ export class MessageProvider extends Component {
       id,
       conversations,
       messages: messages[id] ?? [],
-      // value: conversations.find(conversation => conversation.title === id)?.value ?? ""
+      value: conversations.find(conversation => conversation.title === id)?.value ?? ""
     }
 
     const actions = {
       sendMessage: this.sendMessage,
-      handlePressInput: this.handlePressInput,
-      handleChangeInput: this.handleChangeInput
+      handleChangeValue: this.handleChangeValue
     }
 
     return children(state, actions)

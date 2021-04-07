@@ -1,7 +1,7 @@
 import { Input, withStyles, InputAdornment } from "@material-ui/core"
 import { Send } from "@material-ui/icons"
 import PropTypes from 'prop-types'
-import React, { Component } from "react"
+import React, {Component, createRef} from "react"
 
 
 import { Message } from "./message"
@@ -16,6 +16,7 @@ const StyledInput = withStyles(() => {
         bottom: "8px",
         padding: "10px 15px",
         fontSize: "15px",
+        width: "1050px",
       },
     },
   }
@@ -27,64 +28,53 @@ export class MessageList extends Component {
     messages: PropTypes.array,
     value: PropTypes.string,
     sendMessage: PropTypes.func,
-    handlePressInput: PropTypes.func
+    handlePressInput: PropTypes.func,
+    handleChangeValue: PropTypes.func
+  }
+  ref = createRef()
+
+  handleScrollBottom = () => {
+    if (this.ref.current) {
+      this.ref.current.scrollTo(0, this.ref.current.scrollHeight)
+    }
   }
 
-  // sendMessage = ({ author, value }) => {
-  //   const { messages } = this.state
-  //
-  //   this.setState({
-  //     messages: [...messages, { author, value }],
-  //     value: "",
-  //   })
-  // }
+  handlePressInput = ({ code }) => {
+    if (code === "Enter") {
+      this.handleSendMessage()
+    }
+  }
 
-  // handleChangeInput = ({ target }) => {
-  //   this.setState({
-  //     value: target.value,
-  //   })
-  // }
-
-  // handlePressInput = ({ code }) => {
-  //   if (code === "Enter") {
-  //     this.sendMessage({ author: "User", value: this.state.value })
-  //   }
-  // }
+  handleSendMessage = () => {
+    const { sendMessage, value } = this.props
+    sendMessage({author: 'User', text: value})
+  }
 
   componentDidUpdate(_, state) {
-    // const { messages } = this.state
-    //
-    // const lastMessage = messages[messages.length - 1]
-    //
-    // if (lastMessage.author === "User" && state.messages !== messages) {
-    //   setTimeout(() => {
-    //     this.sendMessage({ author: "bot", value: "Как дела ?" })
-    //   }, 500)
-    // }
+    this.handleScrollBottom()
   }
 
   render() {
-    const { id, messages, value, sendMessage, handlePressInput } = this.props
+    const { value, messages } = this.props
+    console.log(value);
 
     return (
-      <div className={styles.wrapper}>
+      <div ref={this.ref} className={styles.wrapper}>
         {messages.map((message, index) => (
           <Message message={message} key={index} />
         ))}
         <StyledInput
           fullWidth={true}
           value={value}
-          // onChange={this.handleChangeInput}
-          onKeyPress={(code) => {handlePressInput(code)}}
+          onChange={(e) => this.props.handleChangeValue(e.target.value)}
+          onKeyPress={this.handlePressInput}
           placeholder="Введите сообщение..."
           endAdornment={
             <InputAdornment position="end">
-              { (
+              {value && (
                 <Send
                   className={styles.icon}
-                  onClick={() => {
-                    sendMessage({ author: "User", value, id })
-                  }}
+                  onClick={this.handleSendMessage}
                 />
               )}
             </InputAdornment>
