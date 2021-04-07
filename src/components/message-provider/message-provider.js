@@ -26,17 +26,28 @@ export class MessageProvider extends Component {
     }
   }
 
-  componentDidUpdate(_, state) {
+  componentDidUpdate(_, prevState) {
     const {match: {params}} = this.props
-    const { messages } = this.state
+    const { messages, conversations } = this.state
 
-    const lastMessage = messages[params.id][messages[params.id].length - 1]
+    if (!params.id) {
+      return
+    }
 
-    if (lastMessage.author === "User") {
+    const { lastMessage } = conversations.find(
+        (conversation) => conversation.title === params.id
+    )
+    const currentMessages = messages[params.id]
+    const prevMessages = prevState.messages[params.id]
+    if (
+        lastMessage?.author !== 'bot' &&
+        currentMessages !== prevMessages
+    ) {
       setTimeout(() => {
         this.sendMessage({ author: "bot", text: "Как дела ?", createdTs: new Date()})
       }, 500)
     }
+
   }
 
 
