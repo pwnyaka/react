@@ -1,12 +1,11 @@
-// import { Test } from "@components/app"
 import {ThemeProvider, createMuiTheme} from "@material-ui/core"
 import React from "react"
 import ReactDOM from "react-dom"
+import {Provider} from 'react-redux'
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
-// import styles from "./index.module.css"
-
 import "./index.css"
 import {ChatPage} from "./pages";
+import {store} from "./store";
 
 const dark = {
   color: "red",
@@ -16,12 +15,14 @@ const theme = createMuiTheme(dark)
 
 ReactDOM.render(
     <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <Switch>
-          <Route path="/chat" component={ ()=> <ChatPage/>} />
-          <Route path="*" component={() => <h1>404</h1>}/>
-        </Switch>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <Switch>
+            <Route path="/chat" component={() => <ChatPage/>}/>
+            <Route path="*" component={() => <h1>404</h1>}/>
+          </Switch>
+        </ThemeProvider>
+      </Provider>
     </BrowserRouter>,
     document.getElementById("root"),
 )
