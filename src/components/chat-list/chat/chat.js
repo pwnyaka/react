@@ -5,7 +5,7 @@ import {
   withStyles,
 } from "@material-ui/core"
 import { AccountCircle } from "@material-ui/icons"
-import PropTypes from "prop-types"
+import { format } from "date-fns"
 import React, { Component } from "react"
 
 import styles from "./chat.module.css"
@@ -22,14 +22,10 @@ const StyledListItem = withStyles(() => ({
 }))(ListItem)
 
 export class Chat extends Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    selected: PropTypes.bool.isRequired,
-  }
 
   render() {
-    const { selected, title } = this.props
-
+    const { selected, chat, lastMessage } = this.props
+    const { title } = chat
     return (
       <StyledListItem
         button={true}
@@ -40,7 +36,20 @@ export class Chat extends Component {
         </ListItemIcon>
         <div className={styles.description}>
           <ListItemText className={styles.text} primary={title} />
-          <ListItemText className={styles.text} primary="12.30" />
+          {lastMessage ? (
+              <>
+                <ListItemText
+                    className={styles.text}
+                    primary={`${lastMessage.author}: ${lastMessage.text}`}
+                />
+                <ListItemText
+                    className={styles.text}
+                    primary={format(new Date(lastMessage.createdTs), "HH:mm:ss")}
+                />
+              </>
+          ) : (
+              <ListItemText className={styles.text} primary="Нет сообщений" />
+          )}
         </div>
       </StyledListItem>
     )

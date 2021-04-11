@@ -1,12 +1,6 @@
 .header {
-    background-color: #5094D7;
+    height: 50px;
+    background-color: #2b5278;
     color: white;
     text-align: center;
-    height: 40px;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    width: 100%;
 }

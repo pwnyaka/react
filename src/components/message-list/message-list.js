@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import React, {Component, createRef} from "react"
 
 
+import {connect} from "react-redux";
+import {sendMessage, changeValue } from "../../store";
 import { Message } from "./message"
 import styles from "./message-list.module.css"
 
@@ -22,7 +24,7 @@ const StyledInput = withStyles(() => {
   }
 })(Input)
 
-export class MessageList extends Component {
+export class MessageListView extends Component {
 
   static propTypes = {
     messages: PropTypes.array,
@@ -43,6 +45,13 @@ export class MessageList extends Component {
     if (code === "Enter") {
       this.handleSendMessage()
     }
+  }
+
+  handleChangeInput = (event) => {
+    const { changeValue, match } = this.props
+    const { id } = match.params
+
+    changeValue(id, event?.target.value || "")
   }
 
   handleSendMessage = () => {
@@ -66,7 +75,7 @@ export class MessageList extends Component {
         <StyledInput
           fullWidth={true}
           value={value}
-          onChange={(e) => this.props.handleChangeValue(e.target.value)}
+          onChange={this.handleChangeInput}
           onKeyPress={this.handlePressInput}
           placeholder="Введите сообщение..."
           endAdornment={
@@ -84,3 +93,25 @@ export class MessageList extends Component {
     )
   }
 }
+const mapStateToProps = (state, props) => {
+  console.log(props)
+  const {id} = props.match.params
+
+  return {
+    messages: state.messagesReducer[id] || [],
+    value:
+        state.conversationsReducer.find(
+            (conversation) => conversation.title === id,
+        )?.value || "",
+  }
+}
+
+const mapDispatchToProps = (dispatch) => ({
+  sendMessage: (params) => dispatch(sendMessage(params)),
+  changeValue: (id, value) => dispatch(changeValue(id, value)),
+})
+
+export const MessageList = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(MessageListView)
